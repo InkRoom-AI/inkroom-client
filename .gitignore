@@ -1,0 +1,6 @@
+inkroom
+inkroom.exe
+.env*
+*.token
+receipts/
+outputs/
