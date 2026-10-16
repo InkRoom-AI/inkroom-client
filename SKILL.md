@@ -1,11 +1,26 @@
 ---
 name: inkroom
 description: Generate and edit images with InkRoom using a registered account and MCP Token; supports batch generation, processing, models, prompts, usage and receipt recovery.
+metadata:
+  version: "1.0.2"
 ---
 
 # InkRoom
 
-Use the bundled standalone executable at `scripts/inkroom` (`scripts/inkroom.exe` on Windows). It needs no Python, Node, Go installation, package manager or runtime dependencies. Run `--help` for syntax. Never substitute another model, rewrite the supplied prompt, change references or increase count without permission.
+Use the standalone executable at `scripts/inkroom` (`scripts/inkroom.exe` on Windows). A prebuilt executable needs no Python, Node or Go runtime. Run `--help` for syntax. Never substitute another model, rewrite the supplied prompt, change references or increase count without permission.
+
+## Install the client
+
+Check whether the executable exists before calling it. Platform-specific packages downloaded from InkRoom include it; marketplace imports of the GitHub repository may contain only Go source files.
+
+For a source-only package containing `go.mod` and `main.go`, build the native client from this skill directory with Go 1.25.13 or newer:
+
+```bash
+go build -o scripts/inkroom .
+./scripts/inkroom --help
+```
+
+On Windows use `go build -o scripts/inkroom.exe .` followed by `scripts\\inkroom.exe --help`. Build for the current host; do not run a binary for another operating system or architecture. If Go is unavailable or the build fails, ask the user to sign in at https://inkroom.ai/skill-server and copy the platform-specific installation and account setup instructions. Do not claim installation succeeded until the executable's `--help` succeeds. Building or checking help does not generate images or require a Token.
 
 ## Access
 
