@@ -1,34 +1,74 @@
 # InkRoom client
 
-Official standalone client and Skill instructions for [InkRoom](https://inkroom.ai).
+**[Website: inkroom.ai](https://inkroom.ai)** · [简体中文](README.zh-CN.md) · [Skill guide](SKILL.md)
 
-High-quality AI images. Fast batch workflows. Web / API / MCP / Skill.
+High-quality AI images. Efficient batches. Web / API / MCP / Skill.
 
-## Scope
+Official standalone client and Skill instructions for InkRoom. Use the website for everyday image creation, the API for application integration and batches, or MCP and Skill for AI assistant workflows. Typical uses include product visuals, anime artwork and posters.
 
-Only the user-installed client and Skill instructions are included. Image generation runs on InkRoom Remote MCP. Server source, accounts, provider credentials and business data are excluded.
+## Install
 
-## Build
+For a ready-to-use installation, sign in at [inkroom.ai](https://inkroom.ai) and follow your account's Skill setup instructions. Use the current platform-specific download and authorization details shown there.
 
-Requires Go 1.25.13 or newer.
+To build from source, install Go 1.25.13 or newer:
 
 ```sh
+git clone https://github.com/InkRoom-AI/inkroom-client.git
+cd inkroom-client
 go mod download
 go test ./...
 go build -o inkroom .
 ./inkroom --help
 ```
 
-For ready-to-use installation, sign in at https://inkroom.ai and use your account's Skill setup instructions. Never publish Tokens or authorization setup prompts. Generation requires an InkRoom account and MCP Token; charges follow preview, authorization policy and actual account pricing.
+On Windows, build as `inkroom.exe` and use that executable in the commands below. Prebuilt standalone executables do not require Go, Python or Node.js at runtime.
 
-## Skill
+## Quick start
 
-See [SKILL.md](SKILL.md). Supports discovery, cost previews, confirmed generation, batches, receipt recovery and original-image delivery. This client is not an MCP server.
+Complete account setup first. A valid MCP Token is required. Use the account setup instructions; authorization accepts the Token through standard input, or your secure execution environment can provide `INKROOM_MCP_TOKEN`. Never commit Tokens or place them in process arguments, examples or screenshots.
 
-## Official website
+Discover the currently available tools and their schemas:
 
-https://inkroom.ai
+```sh
+./inkroom tools --output ./inkroom-output
+```
 
-## Source availability
+Call a tool using a JSON argument file:
 
-Published for inspection and integration with InkRoom. No separate open-source license is granted at this stage. Third-party dependencies retain their own licenses.
+```sh
+./inkroom call --tool TOOL_NAME --arguments ./arguments.json --output ./inkroom-output
+```
+
+Replace `TOOL_NAME` with a discovered name and create `arguments.json` according to that tool's current schema. This is a command template, not a ready-made generation request. Do not guess model IDs or hardcode prices.
+
+## Example requests for your AI assistant
+
+After installing the Skill, try:
+- “Create four product visuals from this reference image. Keep the product appearance consistent. Show the actual model and estimated cost first.”
+- “Create three poster variations using this prompt. Preserve the supplied text.”
+- “Resume my previous batch and download the original images. Do not generate again.”
+
+These are natural-language examples, not tool payloads. Available models, image counts, reference support and prices depend on the current tools and account. Preview costs first and follow the account's authorization policy; never bypass spending limits or insufficient balance.
+
+## Download and recover
+
+Keep the original response files and receipts. A failed download does not require another paid generation.
+
+```sh
+# Retry saving media from an existing response
+./inkroom recover --response ./inkroom-output/RESPONSE_FILE.response.json --output ./inkroom-output
+
+# Follow read-only waits for the existing task and save completed results
+./inkroom resume --response ./inkroom-output/RESPONSE_FILE.response.json --output ./inkroom-output
+```
+
+Replace the response filename with your actual saved file. See [SKILL.md](SKILL.md) for previews, authorization, batches, recovery and delivery rules.
+
+## Scope and source availability
+
+Only the user-installed client and Skill instructions are included. Image generation runs on InkRoom Remote MCP. This client is not an MCP server or a public API SDK. Server source, accounts, provider credentials and business data are excluded.
+
+Published for inspection and integration with InkRoom. **No separate open-source license is granted at this stage.** Third-party dependencies retain their own licenses.
+
+[Official website](https://inkroom.ai) · [GitHub organization](https://github.com/InkRoom-AI)
+
