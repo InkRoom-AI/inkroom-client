@@ -14,6 +14,12 @@
 | API | 在自己的应用、脚本中集成和批量生产 |
 | MCP / Skill | 让 AI 助手调用生图能力，兼顾易用和自动化 |
 
+## 在 WorkBuddy 安装
+
+[在 WorkBuddy 安装「InkRoom 图片创作」](https://www.workbuddy.cn/share/asset?shareCode=OOG16KkXbM3k5ghACZI5x1&sig=L8-dKfDjnKRGnew_)
+
+使用 WorkBuddy 的用户可从此入口安装市场版 Skill，再按包内指引完成账号授权。市场版与本仓库 Go 客户端独立维护；生图需要 InkRoom 账号及有效 MCP Token，安装 Skill 不等于免费生图。
+
 ## 安装
 
 **普通用户**：登录 [InkRoom](https://inkroom.ai)，在账号内打开 Skill 配置，使用页面提供的安装与授权指引。以账号页面显示的平台、下载地址和配置为准。
@@ -75,4 +81,5 @@ Windows 可构建为 `inkroom.exe`，并将下方命令中的 `./inkroom` 替换
 仅包含用户侧客户端和 Skill；不包含服务端源码、账号、上游凭据或业务数据。目前公开源码供查看，**尚未授予独立开源许可证**。第三方依赖保留各自的许可。
 
 [访问 InkRoom](https://inkroom.ai) · [GitHub 组织](https://github.com/InkRoom-AI)
+
 

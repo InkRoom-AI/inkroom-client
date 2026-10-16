@@ -6,6 +6,12 @@ High-quality AI images. Efficient batches. Web / API / MCP / Skill.
 
 Official standalone client and Skill instructions for InkRoom. Use the website for everyday image creation, the API for application integration and batches, or MCP and Skill for AI assistant workflows. Typical uses include product visuals, anime artwork and posters.
 
+## Install in WorkBuddy
+
+[Open InkRoom Image Creation in WorkBuddy](https://www.workbuddy.cn/share/asset?shareCode=OOG16KkXbM3k5ghACZI5x1&sig=L8-dKfDjnKRGnew_)
+
+Use this marketplace Skill if you work in WorkBuddy. The marketplace package is maintained separately from this Go client. Open the page in WorkBuddy to install it, then follow its account authorization instructions. An InkRoom account and a valid MCP Token are required for generation; installing the Skill does not grant free image generation.
+
 ## Install
 
 For a ready-to-use installation, sign in at [inkroom.ai](https://inkroom.ai) and follow your account's Skill setup instructions. Use the current platform-specific download and authorization details shown there.
@@ -71,4 +77,5 @@ Only the user-installed client and Skill instructions are included. Image genera
 Published for inspection and integration with InkRoom. **No separate open-source license is granted at this stage.** Third-party dependencies retain their own licenses.
 
 [Official website](https://inkroom.ai) · [GitHub organization](https://github.com/InkRoom-AI)
+
 
