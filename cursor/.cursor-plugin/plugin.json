@@ -1,0 +1,36 @@
+{
+  "name": "inkroom",
+  "displayName": "InkRoom",
+  "version": "1.0.0",
+  "description": "Create and edit AI images with InkRoom. Includes a remote MCP server and a Skill for previews, authorized execution, batches and original-image recovery. Requires your own InkRoom account and MCP Token.",
+  "author": {
+    "name": "InkRoom"
+  },
+  "homepage": "https://inkroom.ai/mcp-server",
+  "repository": "https://github.com/InkRoom-AI/inkroom-client",
+  "keywords": [
+    "inkroom",
+    "image-generation",
+    "image-editing",
+    "design",
+    "mcp",
+    "skill"
+  ],
+  "logo": "assets/logo.svg",
+  "skills": "skills",
+  "mcpServers": "mcp.json",
+  "variables": {
+    "type": "object",
+    "properties": {
+      "INKROOM_MCP_TOKEN": {
+        "type": "string",
+        "title": "InkRoom MCP Token",
+        "description": "Your own InkRoom MCP Token from https://inkroom.ai/mcp-server, without the Bearer prefix. Image generation uses your account credits."
+      }
+    },
+    "required": [
+      "INKROOM_MCP_TOKEN"
+    ]
+  },
+  "license": "MIT"
+}
