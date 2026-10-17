@@ -1,0 +1,18 @@
+{
+  "name": "inkroom",
+  "owner": {
+    "name": "InkRoom"
+  },
+  "metadata": {
+    "description": "Official InkRoom MCP and image creation Skill for Cursor.",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "inkroom",
+      "source": "cursor",
+      "description": "Generate, edit and recover AI images with InkRoom MCP and a guided Skill.",
+      "version": "1.0.0"
+    }
+  ]
+}
