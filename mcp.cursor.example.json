@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "inkroom": {
+      "url": "https://mcp.inkroom.ai",
+      "headers": {
+        "Authorization": "Bearer ${env:INKROOM_MCP_TOKEN}",
+        "Accept-Language": "en",
+        "X-InkRoom-Continuation": "receipt-v1"
+      }
+    }
+  }
+}

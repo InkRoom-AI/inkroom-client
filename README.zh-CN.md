@@ -1,5 +1,10 @@
 # InkRoom 客户端
 
+## MCP、Skill 与公开推广资料
+
+通过 [Remote MCP 接入指南](MCP-GUIDE.md) 配置客户端，查看[创作场景与市场推广材料](MARKETING.md)，或继续使用下方现有独立客户端。品牌 GitHub 账号为 InkRoomAI，公开仓库位于 InkRoom-AI 组织。
+
+
 [English](README.md) · **[官方网站：inkroom.ai](https://inkroom.ai)**
 
 好模型 高效 批量。通过网站、API、MCP 与 Skill，让 AI 图片创作融入日常工作和自动化流程。

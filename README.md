@@ -1,5 +1,10 @@
 # InkRoom client
 
+## MCP, Skills and public materials
+
+Connect through [Remote MCP](MCP-GUIDE.md), explore [image workflows and directory copy](MARKETING.md), or use the standalone client below. The public repository is maintained by the InkRoomAI brand account in the InkRoom-AI organization.
+
+
 **[Website: inkroom.ai](https://inkroom.ai)** · [简体中文](README.zh-CN.md) · [Skill guide](SKILL.md)
 
 High-quality AI images. Efficient batches. Web / API / MCP / Skill.
