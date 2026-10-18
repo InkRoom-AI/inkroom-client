@@ -1,5 +1,9 @@
 # InkRoom 客户端
 
+## 免 Key 提示词助手（预览）
+
+[InkRoom Prompts MCP 与 Skill](prompts/)：公开提示词和对应示例图，免费限额内文本优化，无需登录或 Key。新增目录采用独立 MIT 许可；线上开通与真实验收待完成。原付费生图授权保持不变。
+
 ## MCP、Skill 与公开推广资料
 
 通过 [Remote MCP 接入指南](MCP-GUIDE.md) 配置客户端，查看[创作场景与市场推广材料](MARKETING.md)，或继续使用下方现有独立客户端。品牌 GitHub 账号为 InkRoomAI，公开仓库位于 InkRoom-AI 组织。
