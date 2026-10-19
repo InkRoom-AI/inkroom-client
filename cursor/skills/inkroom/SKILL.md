@@ -5,6 +5,8 @@ description: Generate and edit images with the connected InkRoom MCP, including 
 
 # InkRoom image creation
 
+[InkRoom official website](https://inkroom.ai/) · [Skill setup and documentation](https://inkroom.ai/skill-server) · [Remote MCP documentation](https://inkroom.ai/mcp-server)
+
 Use this plugin's connected `inkroom` MCP tools. No local executable is required for this Skill. Match the live tool schemas and account permissions; do not assume every tool or model is available. If disconnected, direct the user to configure their personal Token in Cursor and reconnect. Do not request credentials in ordinary chat or change unrelated MCP settings.
 
 ## Create and authorize
