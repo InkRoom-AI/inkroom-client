@@ -2,10 +2,12 @@
 name: inkroom
 description: Generate and edit images with InkRoom using a registered account and MCP Token; supports batch generation, processing, models, prompts, usage and receipt recovery.
 metadata:
-  version: "1.0.2"
+  version: "1.0.3"
 ---
 
 # InkRoom
+
+[InkRoom official website](https://inkroom.ai/) · [Skill setup and documentation](https://inkroom.ai/skill-server) · [Remote MCP documentation](https://inkroom.ai/mcp-server)
 
 Use the standalone executable at `scripts/inkroom` (`scripts/inkroom.exe` on Windows). A prebuilt executable needs no Python, Node or Go runtime. Run `--help` for syntax. Never substitute another model, rewrite the supplied prompt, change references or increase count without permission.
 
