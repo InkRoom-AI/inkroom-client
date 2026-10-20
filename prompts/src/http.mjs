@@ -3,7 +3,7 @@ import {StreamableHTTPServerTransport} from '@modelcontextprotocol/sdk/server/st
 import {createPromptServer} from './server.mjs';
 // Loopback only. A hosted deployment must terminate TLS, validate its public
 // Host/Origin and enforce ingress limits before forwarding to this process.
-export function createHttpApp(client) {
+export function createHttpApp(client,catalog) {
   const app = createMcpExpressApp({host:'127.0.0.1'});
   app.use((req,res,next) => {
     if (req.headers.origin) {
@@ -15,7 +15,7 @@ export function createHttpApp(client) {
     res.setHeader('Cache-Control','no-store'); next();
   });
   app.post('/mcp',async (req,res) => {
-    const server = createPromptServer(client);
+    const server = createPromptServer(client,catalog);
     const transport = new StreamableHTTPServerTransport({sessionIdGenerator:undefined,enableJsonResponse:true});
     res.on('close',() => { void transport.close(); void server.close(); });
     try { await server.connect(transport); await transport.handleRequest(req,res,req.body); }

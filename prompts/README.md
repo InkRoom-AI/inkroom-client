@@ -37,7 +37,7 @@ After downloading the GitHub release package, use this portable STDIO configurat
   "mcpServers": {
     "inkroom-prompts": {
       "command": "npx",
-      "args": ["-y", "--package", "https://github.com/InkRoom-AI/inkroom-client/releases/download/prompts-v1.0.3/inkroom-prompts-1.0.3.tgz", "inkroom-prompts"]
+      "args": ["-y", "--package", "https://github.com/InkRoom-AI/inkroom-client/releases/download/prompts-v1.0.4/inkroom-prompts-1.0.4.tgz", "inkroom-prompts"]
     }
   }
 }
@@ -107,7 +107,7 @@ The MCP and Skill both call **https://prompts.inkroom.ai** for free search and t
 
 The repository marketplace includes a separate `inkroom-prompts` plugin rooted in `prompts/`. It combines the free local STDIO MCP and the `inkroom-prompts` Skill. It does not change the paid `inkroom` plugin. Marketplace review and actual Cursor installation are separate states; do not treat this source package as an approved listing.
 
-- Plugin distribution version: `1.0.3`; pinned MCP runtime: `1.0.3`.
+- Plugin distribution version: `1.0.4`; pinned MCP runtime: `1.0.4`.
 - Requires Node.js 20.3+ and internet access. The MCP starts with `npx` using the existing public GitHub release TGZ.
 - No account, API key, MCP Token, plugin secret, or paid image-generation setup is required. The service has shared request-count limits.
 - Tools: `search_prompts` and `optimize_prompt`. Optimization may cost the platform money; no model call runs during installation. Follow the included Skill before calling tools.
@@ -117,6 +117,11 @@ The repository marketplace includes a separate `inkroom-prompts` plugin rooted i
 
 ## Docker STDIO distribution
 
-The Dockerfile packages the same keyless **1.0.3** MCP implementation. Build from this directory with `docker build -t inkroom-prompts:1.0.3 .`, then configure your MCP client to run `docker run --rm -i --read-only --cap-drop=ALL --security-opt=no-new-privileges inkroom-prompts:1.0.3`. No port, volume, API key or MCP Token is required. Network access is needed for public prompt searches and capped text optimization. The image runs as the unprivileged `node` user.
+The Dockerfile packages the same keyless **1.0.4** MCP implementation. Build from this directory with `docker build -t inkroom-prompts:1.0.4 .`, then configure your MCP client to run `docker run --rm -i --read-only --cap-drop=ALL --security-opt=no-new-privileges inkroom-prompts:1.0.4`. No port, volume, API key or MCP Token is required. Network access is needed for public prompt searches and capped text optimization. The image runs as the unprivileged `node` user.
 
 Container initialization, tool discovery, invalid-input/offline errors and one anonymous public prompt search were verified on Linux/amd64 with Node v22.23.3. The base image is pinned by digest. Container protocol validation does not establish Docker Catalog approval or native Docker Desktop Toolkit installation; those statuses are tracked separately. Other CPU architectures have not been tested.
+
+
+## Public read-only capabilities in 1.0.4
+
+Adds local `help` and anonymous `list_models` (official InkRoom sale prices) alongside `search_prompts` and `optimize_prompt`. Read-only catalog/help/search needs no Key and never starts optimization or generation. Explicit invalid credentials are never silently retried as anonymous. Existing prompt search, optional test origin and optimization limits remain unchanged. Native desktop host installation and registry approval are separate acceptance states.

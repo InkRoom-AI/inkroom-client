@@ -1,6 +1,10 @@
+# 1.0.4
+
+Adds static help and public model catalog while preserving search/optimize, shared quotas and no-Key behavior. Four discovered MCP tools. No image generation.
+
 # Changes
 
-## 1.0.3
+## 1.0.4
 
 - Establish one stable version for the free MCP, Skill, MCPB and Cursor plugin; retain earlier preview history.
 - Add a separate free Cursor plugin and an additive marketplace entry without changing the image plugin.

@@ -1,14 +1,14 @@
 {
   "product": "inkroom-prompts",
-  "version": "1.0.3",
-  "tag": "prompts-v1.0.3",
+  "version": "1.0.4",
+  "tag": "prompts-v1.0.4",
   "artifacts": {
-    "npmArchive": "inkroom-prompts-1.0.3.tgz",
-    "skillArchive": "inkroom-prompts-skill-1.0.3.zip",
-    "mcpBundle": "inkroom-prompts-1.0.3.mcpb",
+    "npmArchive": "inkroom-prompts-1.0.4.tgz",
+    "skillArchive": "inkroom-prompts-skill-1.0.4.zip",
+    "mcpBundle": "inkroom-prompts-1.0.4.mcpb",
     "cursorPlugin": {
       "source": "prompts",
-      "version": "1.0.3"
+      "version": "1.0.4"
     }
   },
   "adapterPolicy": {
