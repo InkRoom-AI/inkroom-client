@@ -81,3 +81,10 @@ AI 优化属于平台内部调用，使用管理员选择的内部文本模型�
 免费提示词 MCP、Skill、MCPB 与 Cursor 插件统一采用 **1.0.3**。根市场配置新增独立 inkroom-prompts，源目录为 prompts/；原付费图片 inkroom 插件不变。需要 Node.js20.3+，免账号、Key、Token，不生成图片。源码分发、平台审核、上架和实际客户端安装分别核验，不能相互替代。
 
 特殊平台仅适配元数据或包结构，保持本产品基线版本，差异记录在版本清单中；已待审旧批次保留历史，不通过改名重复提交。发布前运行 `npm run verify:release` 检查版本、安装地址、Skill镜像与Cursor配置。
+
+
+## Docker STDIO 分发
+
+Dockerfile 打包同一套免鉴权 **1.0.3** MCP。在当前目录执行 `docker build -t inkroom-prompts:1.0.3 .`，MCP 客户端使用 `docker run --rm -i --read-only --cap-drop=ALL --security-opt=no-new-privileges inkroom-prompts:1.0.3` 连接。无需端口、卷、API Key 或 MCP Token；公开搜索和限额文字优化仍需网络。镜像以非 root 的 node 用户运行，基础镜像已锁 digest。
+
+Linux/amd64、Node v22.23.3 已验证容器初始化、工具发现、无效输入/离线错误及一次匿名提示词搜索。容器协议通过不等于 Docker Catalog 审核或原生 Docker Desktop Toolkit 安装验收通过；其他架构尚未测试。

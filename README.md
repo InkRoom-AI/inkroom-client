@@ -1,6 +1,6 @@
 # InkRoom client
 
-## Keyless prompt assistant (preview)
+## Keyless prompt assistant
 
 [InkRoom Prompts MCP + Skill](prompts/) searches public prompts with real example images and offers capped text optimization. No login or Key. MIT applies only to the new `prompts/` and `skills/inkroom-prompts/` directories. Use the [official prompt tools](https://inkroom.ai/tools/prompts) and [documentation](https://inkroom.ai/tools/prompts/docs); existing paid image services keep their authorization.
 
