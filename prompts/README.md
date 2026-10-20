@@ -113,3 +113,10 @@ The repository marketplace includes a separate `inkroom-prompts` plugin rooted i
 - Tools: `search_prompts` and `optimize_prompt`. Optimization may cost the platform money; no model call runs during installation. Follow the included Skill before calling tools.
 - Official tools: https://inkroom.ai/tools/prompts . Documentation: https://inkroom.ai/tools/prompts/docs . Privacy: [PRIVACY.md](PRIVACY.md).
 - No hooks, background jobs, telemetry, or credentials are included. Disable or uninstall the plugin through Cursor to remove this integration; preserve unrelated MCP connections.
+
+
+## Docker STDIO distribution
+
+The Dockerfile packages the same keyless **1.0.3** MCP implementation. Build from this directory with `docker build -t inkroom-prompts:1.0.3 .`, then configure your MCP client to run `docker run --rm -i --read-only --cap-drop=ALL --security-opt=no-new-privileges inkroom-prompts:1.0.3`. No port, volume, API key or MCP Token is required. Network access is needed for public prompt searches and capped text optimization. The image runs as the unprivileged `node` user.
+
+Container initialization, tool discovery, invalid-input/offline errors and one anonymous public prompt search were verified on Linux/amd64 with Node v22.23.3. The base image is pinned by digest. Container protocol validation does not establish Docker Catalog approval or native Docker Desktop Toolkit installation; those statuses are tracked separately. Other CPU architectures have not been tested.

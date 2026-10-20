@@ -1,0 +1,10 @@
+**
+!package.json
+!package-lock.json
+!LICENSE
+!src/
+!src/**
+!skills/
+!skills/inkroom-prompts/
+!skills/inkroom-prompts/scripts/
+!skills/inkroom-prompts/scripts/**
