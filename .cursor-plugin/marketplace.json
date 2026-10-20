@@ -18,7 +18,7 @@
       "name": "inkroom-prompts",
       "source": "prompts",
       "description": "Search public image prompts with paired original examples or rewrite image ideas. No account, API key or MCP Token. Does not generate images.",
-      "version": "1.0.3"
+      "version": "1.0.4"
     }
   ]
 }

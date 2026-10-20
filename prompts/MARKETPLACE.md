@@ -22,7 +22,7 @@
 
 ## Publication gate
 
-The MCP, Skill, MCPB and Cursor plugin share release **1.0.3**. A client release is not marketplace approval or a new hosted deployment. Before claiming new live hosted behavior:
+The MCP, Skill, MCPB and Cursor plugin share release **1.0.4**. A client release is not marketplace approval or a new hosted deployment. Before claiming new live hosted behavior:
 
 1. Deploy the new public endpoints through InkRoom's release task, with validated trusted proxy/IP handling, shared guard storage, a confirmed enabled internal text model/channel, shared request-count limits and the internal actual-usage ledger.
 2. In the test environment verify all search, no-match, optimization, paired image rendering, download/open links, errors, limits and cancellation paths. Check logs and data boundaries. Verify both the MCP archive and standalone Skill archive as fresh installs.
