@@ -29,7 +29,10 @@ import (
 //go:embed SKILL.md
 var skill []byte
 
-const version = "1.0.5"
+//go:embed PROMPT_REVERSE_SKILL.md
+var promptReverseSkill []byte
+
+const version = "1.0.8"
 const maxBytes = 100 << 20
 
 type object = map[string]any
@@ -187,7 +190,7 @@ func parse(raw []byte) (object, error) {
 			return result, nil
 		}
 	}
-	return nil, errors.New("no JSON result; raw response retained")
+	return nil, errors.New("no JSON result")
 }
 func str(v any) string { s, _ := v.(string); return s }
 func compact(v any) any {
@@ -282,12 +285,24 @@ func settings() object {
 }
 func install(args []string) error {
 	flags := flag.NewFlagSet("install", flag.ContinueOnError)
+	skillName := flags.String("skill", "inkroom", "inkroom or inkroom-prompt-reverse")
 	dir := flags.String("skills-dir", "", "host's actual user-level skills directory")
 	origin := flags.String("origin", "", "website origin; discovers service endpoints automatically")
 	api := flags.String("api-origin", "", "InkRoom API origin")
 	mcp := flags.String("mcp-url", "", "InkRoom MCP endpoint")
 	if err := flags.Parse(args); err != nil {
 		return err
+	}
+	selectedSkill := skill
+	switch *skillName {
+	case "inkroom":
+	case "inkroom-prompt-reverse":
+		selectedSkill = promptReverseSkill
+	default:
+		return errors.New("unsupported Skill; choose inkroom or inkroom-prompt-reverse")
+	}
+	if flags.NArg() != 0 {
+		return errors.New("unexpected positional arguments")
 	}
 	if *dir == "" {
 		if codexHome := os.Getenv("CODEX_HOME"); codexHome != "" {
@@ -330,9 +345,9 @@ func install(args []string) error {
 	}
 	home, _ := os.UserHomeDir()
 	root := strings.Replace(*dir, "~/", home+string(os.PathSeparator), 1)
-	target := filepath.Join(root, "inkroom")
+	target := filepath.Join(root, *skillName)
 	if _, err := os.Stat(target); !errors.Is(err, os.ErrNotExist) {
-		return errors.New("InkRoom already exists; preserved. Review updates separately")
+		return fmt.Errorf("%s already exists; preserved. Review updates separately", *skillName)
 	}
 	if err := os.MkdirAll(root, 0700); err != nil {
 		return err
@@ -354,7 +369,7 @@ func install(args []string) error {
 	if runtime.GOOS == "windows" {
 		name += ".exe"
 	}
-	for path, data := range map[string][]byte{"SKILL.md": skill, "settings.json": marshal(object{"apiOrigin": *api, "mcpUrl": *mcp}), filepath.Join("scripts", name): binary} {
+	for path, data := range map[string][]byte{"SKILL.md": selectedSkill, "settings.json": marshal(object{"apiOrigin": *api, "mcpUrl": *mcp}), filepath.Join("scripts", name): binary} {
 		if err := atomic(filepath.Join(stage, path), data); err != nil {
 			return err
 		}
@@ -374,7 +389,7 @@ func tokenPath(mcp string) string {
 }
 func run(args []string) error {
 	if len(args) == 0 || args[0] == "help" || args[0] == "--help" {
-		fmt.Println("InkRoom Skill " + version + " (" + runtime.GOOS + "/" + runtime.GOARCH + ")\nCommands: install --origin URL [--skills-dir DIR] | authorize (Token from stdin) | tools | call --tool NAME --arguments FILE | recover --response FILE | resume --response FILE [--max-polls N]\nUse --output DIR after a command. Account: INKROOM_MCP_TOKEN environment variable. No runtime dependencies.")
+		fmt.Println("InkRoom Skill " + version + " (" + runtime.GOOS + "/" + runtime.GOARCH + ")\nCommands: install --origin URL [--skills-dir DIR] [--skill inkroom|inkroom-prompt-reverse] | authorize (Token from stdin) | tools | models | capabilities [--topic TOPIC] | call --tool NAME --arguments FILE | reverse --image FILE_OR_URL [--action preview] | reverse --action auto|run|get --request-id ID | recover --response FILE | resume --response FILE [--max-polls N]\nPublic discovery, models and capabilities need no account or environment configuration. Account tools use INKROOM_MCP_TOKEN or saved authorization. Use --output DIR after a command. No runtime dependencies.")
 		return nil
 	}
 	if args[0] == "authorize" {
@@ -392,7 +407,7 @@ func run(args []string) error {
 			return errors.New("empty or oversized Token")
 		}
 		payload := object{"jsonrpc": "2.0", "id": id(), "method": "tools/list"}
-		response, err := request(mcp, payload, map[string]string{"Authorization": "Bearer " + token, "Content-Type": "application/json", "Accept": "application/json, text/event-stream", "MCP-Protocol-Version": "2025-03-26"}, false)
+		response, err := request(mcp, payload, skillMCPHeaders(token), false)
 		if err != nil {
 			return err
 		}
@@ -409,17 +424,21 @@ func run(args []string) error {
 	if args[0] == "install" {
 		return install(args[1:])
 	}
+	if args[0] == "reverse" {
+		return reverse(args[1:])
+	}
 	command := args[0]
 	switch command {
 	case "guest-access", "guest-generate":
 		return errors.New("Skill 仅限注册用户，请登录并使用有效 MCP Token")
-	case "tools", "call", "recover", "resume":
+	case "tools", "models", "capabilities", "call", "recover", "resume":
 	default:
 		return errors.New("unknown command; run --help")
 	}
 	flags := flag.NewFlagSet(command, flag.ContinueOnError)
 	out := flags.String("output", "inkroom-output", "result directory")
 	tool := flags.String("tool", "", "MCP tool name")
+	topic := flags.String("topic", "", "public help topic for capabilities")
 	arguments := flags.String("arguments", "", "JSON arguments file")
 	responseFile := flags.String("response", "", "original response file")
 	maxPolls := flags.Int("max-polls", 32, "maximum read-only continuation calls for resume")
@@ -440,6 +459,7 @@ func run(args []string) error {
 	config := settings()
 	var value object
 	var priorMedia []object
+	publicRead := false
 	if command == "recover" || command == "resume" {
 		record, err = filepath.Abs(*responseFile)
 		if err != nil {
@@ -479,20 +499,19 @@ func run(args []string) error {
 		}
 
 	} else {
-		mcp := env("INKROOM_MCP_URL", str(config["mcpUrl"]))
-		token := os.Getenv("INKROOM_MCP_TOKEN")
-		if token == "" {
-			raw, _ := os.ReadFile(tokenPath(mcp))
-			token = strings.TrimSpace(string(raw))
-		}
-		if token == "" {
-			return errors.New("account authorization required; no automatic fallback to guest")
-		}
-		if mcp == "" {
-			return errors.New("set INKROOM_MCP_URL or use install")
-		}
 		payload := object{"jsonrpc": "2.0", "id": id(), "method": "tools/list"}
-		if command == "call" {
+		if command == "models" || command == "capabilities" {
+			name, input := "list_models", object{}
+			if command == "capabilities" {
+				name = "help"
+				input["topic"] = "quickstart"
+				if *topic != "" {
+					input["topic"] = *topic
+				}
+			}
+			payload["method"] = "tools/call"
+			payload["params"] = object{"name": name, "arguments": input}
+		} else if command == "call" {
 			raw, err := os.ReadFile(*arguments)
 			if err != nil {
 				return err
@@ -508,23 +527,8 @@ func run(args []string) error {
 			payload["method"] = "tools/call"
 			payload["params"] = object{"name": *tool, "arguments": input}
 		}
-		requestRecord := strings.TrimSuffix(record, ".response.json") + ".request.json"
-		if err = atomic(requestRecord, marshal(payload)); err != nil {
-			return err
-		}
-		raw, err := request(mcp, payload, map[string]string{"Authorization": "Bearer " + token, "Content-Type": "application/json", "Accept": "application/json, text/event-stream", "MCP-Protocol-Version": "2025-03-26"}, false)
-		if len(raw) > 0 {
-			if saveErr := atomic(record, raw); saveErr != nil {
-				return saveErr
-			}
-		}
-		if err != nil {
-			if len(raw) > 0 {
-				return fmt.Errorf("%w；请求记录：%s；响应记录：%s", err, requestRecord, record)
-			}
-			return fmt.Errorf("%w；请求记录：%s", err, requestRecord)
-		}
-		value, err = parse(raw)
+		publicRead = publicSkillPayload(payload)
+		value, err = toolRequest(payload, record, config, publicRead)
 		if err != nil {
 			return err
 		}
@@ -532,9 +536,99 @@ func run(args []string) error {
 	if command == "resume" {
 		return resumeResponse(value, record, output, config, *maxPolls, priorMedia...)
 	}
-	media := append(saveMedia(value, output), unavailableOriginals(value)...)
-	reviewFailedMedia(media, record, output, config)
-	if err = atomic(strings.TrimSuffix(record, ".json")+".manifest.json", marshal(media)); err != nil {
+	return finishResponse(value, record, output, config, !publicRead && (command != "call" || *tool != "reverse_prompt"))
+}
+
+func publicSkillTool(name string, input object) bool {
+	if name == "list_models" || name == "help" {
+		return true
+	}
+	if name != "prompts" {
+		return false
+	}
+	rawAction, hasAction := input["action"]
+	rawScope, hasScope := input["scope"]
+	action, actionOK := rawAction.(string)
+	scope, scopeOK := rawScope.(string)
+	return (!hasAction || actionOK && (action == "search" || action == "get")) &&
+		(!hasScope || scopeOK && scope == "recommended")
+}
+
+func publicSkillPayload(payload object) bool {
+	if payload["method"] == "tools/list" {
+		return true
+	}
+	params, _ := payload["params"].(map[string]any)
+	input, _ := params["arguments"].(map[string]any)
+	return payload["method"] == "tools/call" && publicSkillTool(str(params["name"]), input)
+}
+
+// All account tools use the same endpoint-specific authorization and receipt
+// files. A transport failure never retries a possibly submitted paid request.
+func accountRequest(payload object, record string, config object) (object, error) {
+	return toolRequest(payload, record, config, false)
+}
+
+// Only the explicit public discovery allowlist can omit authorization. A supplied
+// Token is still sent and is never retried anonymously if the server rejects it.
+func toolRequest(payload object, record string, config object, public bool) (object, error) {
+	mcp := env("INKROOM_MCP_URL", str(config["mcpUrl"]))
+	if mcp == "" && public {
+		mcp = "https://mcp.inkroom.ai"
+	}
+	if mcp == "" {
+		return nil, errors.New("set INKROOM_MCP_URL or use install")
+	}
+	token := os.Getenv("INKROOM_MCP_TOKEN")
+	if token == "" {
+		raw, _ := os.ReadFile(tokenPath(mcp))
+		token = strings.TrimSpace(string(raw))
+	}
+	if token == "" && !public {
+		return nil, errors.New("account authorization required; no automatic fallback to guest")
+	}
+	requestRecord := strings.TrimSuffix(record, ".response.json") + ".request.json"
+	if err := atomic(requestRecord, marshal(payload)); err != nil {
+		return nil, err
+	}
+	raw, err := request(mcp, payload, skillMCPHeaders(token), false)
+	receipts := fmt.Sprintf("；请求记录：%s", requestRecord)
+	if raw != nil {
+		if saveErr := atomic(record, raw); saveErr != nil {
+			return nil, fmt.Errorf("%w；请求记录：%s；响应记录保存失败：%s", saveErr, requestRecord, record)
+		}
+		receipts += fmt.Sprintf("；响应记录：%s", record)
+	}
+	if err != nil {
+		return nil, fmt.Errorf("%w%s", err, receipts)
+	}
+	value, parseErr := parse(raw)
+	if parseErr != nil {
+		if params, ok := payload["params"].(map[string]any); ok {
+			if arguments, ok := params["arguments"].(map[string]any); ok && str(arguments["requestId"]) != "" {
+				receipts += fmt.Sprintf("；原 requestId：%s", str(arguments["requestId"]))
+			}
+		}
+		return nil, fmt.Errorf("%w；执行结果未知，请用原 requestId 查询状态，勿重新提交%s", parseErr, receipts)
+	}
+	return value, nil
+}
+
+func skillMCPHeaders(token string) map[string]string {
+	headers := map[string]string{"Content-Type": "application/json", "Accept": "application/json, text/event-stream", "MCP-Protocol-Version": "2025-03-26", "X-InkRoom-Client": "skill"}
+	if token != "" {
+		headers["Authorization"] = "Bearer " + token
+	}
+	return headers
+}
+
+func finishResponse(value object, record, output string, config object, saveImages bool) error {
+	media := []object{}
+	if saveImages {
+		media = append(saveMedia(value, output), unavailableOriginals(value)...)
+		reviewFailedMedia(media, record, output, config)
+	}
+	if err := atomic(strings.TrimSuffix(record, ".json")+".manifest.json", marshal(media)); err != nil {
 		return err
 	}
 	fmt.Println(string(marshal(object{"response": record, "media": media, "result": compact(value)})))

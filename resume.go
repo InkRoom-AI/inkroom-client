@@ -31,6 +31,14 @@ func recoverableOriginalError(code string) bool {
 	return false
 }
 func defaultSkillDelivery(tool string, input object) {
+	// Executing a frozen preview accepts its identity, not new requirements.
+	// The delivery mode was already chosen by that preview. wait_images may
+	// independently select a display mode without starting paid work.
+	_, hasRequest := input["requestId"]
+	_, hasBatch := input["batchId"]
+	if tool != "wait_images" && (hasRequest || hasBatch) {
+		return
+	}
 	switch tool {
 	case "generate_image", "batch_generate", "derive_image", "upscale_image", "wait_images":
 		if _, present := input["deliveryMode"]; !present {
@@ -142,7 +150,7 @@ func resumeResponse(value object, record, output string, config object, maxPolls
 		if err := atomic(strings.TrimSuffix(newRecord, ".response.json")+".request.json", marshal(payload)); err != nil {
 			return err
 		}
-		raw, err := request(mcp, payload, map[string]string{"Authorization": "Bearer " + token, "Content-Type": "application/json", "Accept": "application/json, text/event-stream", "MCP-Protocol-Version": "2025-03-26"}, false)
+		raw, err := request(mcp, payload, skillMCPHeaders(token), false)
 		if len(raw) > 0 {
 			if e := atomic(newRecord, raw); e != nil {
 				return e

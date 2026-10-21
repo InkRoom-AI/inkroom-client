@@ -24,7 +24,7 @@ Use this marketplace Skill if you work in WorkBuddy. The marketplace package is 
 
 ## Install
 
-For a ready-to-use installation, sign in at [inkroom.ai](https://inkroom.ai) and follow your account's Skill setup instructions. Use the current platform-specific download and authorization details shown there.
+For a ready-to-use installation, use the platform-specific downloads in the [Skill setup guide](https://inkroom.ai/skill-server) and [public release manifest](https://inkroom.ai/skills/manifest.json). Public queries need no login; follow your account's setup instructions when enabling account or media capabilities.
 
 To build from source, install Go 1.25.13 or newer:
 
@@ -41,7 +41,9 @@ On Windows, build as `inkroom.exe` and use that executable in the commands below
 
 ## Quick start
 
-Complete account setup first. A valid MCP Token is required. Use the account setup instructions; authorization accepts the Token through standard input, or your secure execution environment can provide `INKROOM_MCP_TOKEN`. Never commit Tokens or place them in process arguments, examples or screenshots.
+The standalone image client is version 1.0.8. Public model names, InkRoom sales prices, help and the anonymous tool catalog need no account, Key or endpoint settings. Run `./inkroom models --output ./inkroom-output` or `./inkroom capabilities --output ./inkroom-output`; these reads do not generate media or charge credits. Without a Token, `tools` lists only public tools.
+
+Account data, private prompts, receipts, media generation, processing, image-to-prompt analysis and their previews still require account setup and a valid MCP Token. Authorization accepts the Token through standard input, or your secure execution environment can provide `INKROOM_MCP_TOKEN`. Never commit Tokens or place them in process arguments, examples or screenshots. A rejected Token must not be removed to retry anonymously.
 
 Discover the currently available tools and their schemas:
 
