@@ -96,7 +96,7 @@ func reviewFailedMedia(entries []object, record, output string, config object) {
 			item["reviewStatus"] = "record_failed"
 			continue
 		}
-		raw, err := request(mcp, payload, map[string]string{"Authorization": "Bearer " + token, "Content-Type": "application/json", "Accept": "application/json, text/event-stream", "MCP-Protocol-Version": "2025-03-26"}, false)
+		raw, err := request(mcp, payload, skillMCPHeaders(token), false)
 		if len(raw) > 0 {
 			if saveErr := atomic(prefix+".response.json", raw); saveErr != nil {
 				item["reviewStatus"] = "record_failed"

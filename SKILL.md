@@ -1,15 +1,17 @@
 ---
 name: inkroom
-description: Generate and edit images with InkRoom using a registered account and MCP Token; supports batch generation, processing, models, prompts, usage and receipt recovery.
+description: Query public InkRoom models, prices and capabilities without login, or generate and edit images with a registered account and MCP Token; supports batch generation, processing, prompts, usage and receipt recovery.
 metadata:
-  version: "1.0.3"
+  version: "1.0.8"
 ---
 
 # InkRoom
 
 [InkRoom official website](https://inkroom.ai/) · [Skill setup and documentation](https://inkroom.ai/skill-server) · [Remote MCP documentation](https://inkroom.ai/mcp-server)
 
-Use the standalone executable at `scripts/inkroom` (`scripts/inkroom.exe` on Windows). A prebuilt executable needs no Python, Node or Go runtime. Run `--help` for syntax. Never substitute another model, rewrite the supplied prompt, change references or increase count without permission.
+Use the bundled standalone executable at `scripts/inkroom` (`scripts/inkroom.exe` on Windows). It needs no Python, Node, Go installation, package manager or runtime dependencies. Run `--help` for syntax. Never substitute another model, rewrite the supplied prompt, change references or increase count without permission.
+
+For image-to-prompt reconstruction, use the companion `inkroom-prompt-reverse` Skill or discover the `reverse_prompt` tool. It shares this account authorization; its preview quotes the analysis price separately. A recreation check returns here as a separately quoted text-to-image request, using the reconstructed positive prompt verbatim without the source image.
 
 ## Install the client
 
@@ -22,11 +24,13 @@ go build -o scripts/inkroom .
 ./scripts/inkroom --help
 ```
 
-On Windows use `go build -o scripts/inkroom.exe .` followed by `scripts\\inkroom.exe --help`. Build for the current host; do not run a binary for another operating system or architecture. If Go is unavailable or the build fails, ask the user to sign in at https://inkroom.ai/skill-server and copy the platform-specific installation and account setup instructions. Do not claim installation succeeded until the executable's `--help` succeeds. Building or checking help does not generate images or require a Token.
+On Windows use `go build -o scripts/inkroom.exe .` followed by `scripts\\inkroom.exe --help`. Build for the current host; do not run a binary for another operating system or architecture. If Go is unavailable or the build fails, use the platform-specific prebuilt package linked from https://inkroom.ai/skill-server and the public manifest at https://inkroom.ai/skills/manifest.json. Public queries need no login; account capabilities still require the user's own setup and authorization. Do not claim installation succeeded until the executable's `--help` succeeds. Building or checking help does not generate images or require a Token.
 
 ## Access
 
-Skill is account-only. Require a valid MCP Token; do not call website guest endpoints or collect hardware identifiers. Without authorization, ask the user to sign in to InkRoom and copy their account setup prompt.
+Public information needs no account, API key or MCP Token: run `models` for current public model names and configured InkRoom sales prices, `capabilities` for public help, or `tools` for the server's anonymous tool catalog. `--help` is offline syntax help. These reads do not run a model, generate media or grant account access. No endpoint environment variable or installation settings are required for these reads; the default is `https://mcp.inkroom.ai`. Public catalog prices are not a personal quote or upstream official list price.
+
+Private account data, usage, tasks, receipts, generation, processing, image-to-prompt analysis and their previews still require the user's valid MCP Token, even when a preview or status read itself has no charge. Do not use website guest endpoints or collect hardware identifiers. For these account capabilities without authorization, ask the user to sign in to InkRoom and copy their account setup prompt. Never remove a supplied or saved Token to retry anonymously after an authorization failure.
 
 For account capabilities use the locally saved account authorization or `INKROOM_MCP_TOKEN`. The one-paste account setup sends the supplied Token to `authorize` via standard input; never as a process argument. `authorize` verifies the Token through a read-only tool discovery request before saving it locally. If verification fails, ask the user to select a valid Token; do not retry paid generation or fall back to guest. Never put credentials into this skill, command arguments, generated artifacts or shared messages. Account mode uses the existing MCP service, scopes, spending policy and billing.
 
@@ -36,7 +40,7 @@ Use the same standalone client on Grok Bot's shared cloud computer. Confirm the 
 
 ## Account capabilities
 
-Call `tools` to discover current schemas; `call --tool TOOL --arguments FILE` accepts a JSON object. Use help or list_models only when needed. Tools include account, prompts, generate_image, derive_image, upscale_image, batch_generate, generation_status and wait_images, according to current server permissions.
+Call `tools` to discover current schemas; `call --tool TOOL --arguments FILE` accepts a JSON object. `list_models`, `help`, and `prompts` with `action` omitted/`search`/`get` and `scope` omitted/`recommended` can be called without authorization. Public prompt lookups query the published library only; private `mine`/`favorites` and all account/media tools retain authorization. Use help or list_models only when needed. Tools include account, prompts, generate_image, derive_image, upscale_image, batch_generate, generation_status and wait_images, according to current server permissions.
 
 Use the current public model IDs returned by the server for new model selection, comparisons and examples. These are the same configured names used by the website, public API and MCP. Never replace them with an upstream technical ID or append an `@channel` suffix. When the user explicitly supplies an original model name or a historical alias, preserve it unchanged: the server resolves compatible old names to the same model and pricing. If no model is specified, omit it and let the server choose; show the actual public model name and quote from the preview instead of hardcoding a client default or price.
 
@@ -46,13 +50,13 @@ Preview generation first. Preserve the returned requestId or batchId, then call 
 
 Each response is saved atomically with a unique filename before interpretation. The client saves inline images and original resource links locally and writes a manifest of paths and SHA-256 hashes. Each success/failure retains `resultId`, `taskId`, zero-based `imageIndex` and `inputIndex` when provided. User-facing image numbers are one-based positions in the original request, not completion order. Different result identities stay separate even when bytes/hash match. Inline media is a preview and is not evidence that the original was saved. It decodes PNG, JPEG and WebP and records actual dimensions. Inspect saved images with the host image tools to verify semantic content and display. Display the saved images using the host's supported image renderer.
 
-Generation and wait calls default to `deliveryMode: "links"` when the caller does not choose a mode. Keep an explicitly chosen mode. Link pages contain at most 32 originals; native pages contain at most 6 previews.
+New previews and wait calls default to `deliveryMode: "links"` when the caller does not choose a mode. Executing an existing `requestId` or `batchId` preserves the frozen preview and does not add a delivery mode. Keep an explicitly chosen mode. Link pages contain at most 32 originals; native pages contain at most 6 previews.
 
 Follow returned nextAction arguments unchanged, including cursor, using another call. For a long batch use `resume --response FILE --output DIR`: it follows only read-only `wait_images`, saves every request/response before parsing, and writes a `.resume.json` checkpoint with all original identities. To continue after interruption or the bounded poll limit, pass that checkpoint to `resume` with the same output directory. Never follow a continuation that starts generation. Resume original receipts with wait_images; omit cursor to retrieve completed media again when needed. Do not regenerate because output was truncated, a local download failed, or the client exited. Use `recover --response FILE` to retry local media saving without generating. A saved response is not proof of every expected image: reconcile requested count, task status, settlement and saved originals. Report missing or failed items explicitly. Download failures must not trigger paid generation.
 
 ## Original download failures
 
-Client version 1.0.5 records `errorCode`, `httpStatus`, and the original image identity in the media manifest. A failed media save exits nonzero, even when generation succeeded. `download_timeout`, `download_transport`, `decode_failed`, and `local_write_failed` are different outcomes; do not infer a server refund from them.
+The client records `errorCode`, `httpStatus`, and the original image identity in the media manifest. A failed media save exits nonzero, even when generation succeeded. `download_timeout`, `download_transport`, `decode_failed`, and `local_write_failed` are different outcomes; do not infer a server refund from them.
 
 Original downloads use two bounded workers and a shared connection pool. Transport retries are GET-only, at most three attempts, with private `.part` checkpoints and strong ETag / If-Range checks. An unsupported range falls back to a complete GET. Empty bodies, wrong ranges and incomplete lengths fail; decoded originals are atomically saved. A working verified original is reused across fresh URLs using its result identity.
 

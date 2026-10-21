@@ -31,7 +31,7 @@
 
 ## 安装
 
-**普通用户**：登录 [InkRoom](https://inkroom.ai)，在账号内打开 Skill 配置，使用页面提供的安装与授权指引。以账号页面显示的平台、下载地址和配置为准。
+**普通用户**：打开 [Skill 安装说明](https://inkroom.ai/skill-server)，按实际平台使用[公开发行清单](https://inkroom.ai/skills/manifest.json)中的预编译包。公开查询无需登录；启用账户与媒体功能时，再按本人账号页面完成原有配置与授权。
 
 **从源码构建**：需要 Go 1.25.13 或更新版本。
 
@@ -48,7 +48,9 @@ Windows 可构建为 `inkroom.exe`，并将下方命令中的 `./inkroom` 替换
 
 ## 最小使用示例
 
-先完成账号页面提供的配置与授权。需要有效 MCP Token；不要把 Token 写进命令参数、示例文件、Git 仓库或截图。客户端支持通过标准输入执行 `authorize`，也支持由自己的安全运行环境提供 `INKROOM_MCP_TOKEN`。
+独立图片客户端版本为 1.0.8。公开模型名称、InkRoom 销售价格、帮助与匿名工具目录无需账号、Key 或端点配置。可运行 `./inkroom models --output ./inkroom-output` 或 `./inkroom capabilities --output ./inkroom-output`，不生成媒体、不扣积分；无 Token 的 `tools` 只返回公开工具。
+
+账户数据、私有提示词、回执、媒体生成、处理、反推及其预览仍须先完成账号配置与有效 MCP Token 授权。不要把 Token 写进命令参数、示例文件、Git 仓库或截图。客户端支持通过标准输入执行 `authorize`，也支持由自己的安全运行环境提供 `INKROOM_MCP_TOKEN`。已有 Token 被拒绝时不删除它重试匿名。
 
 查看当前可用工具及参数：
 ```sh

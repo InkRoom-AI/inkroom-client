@@ -11,6 +11,47 @@ import (
 )
 
 // Exercise the real CLI request path without generation or upstream access.
+func TestSkillExecutionReceiptsAreSentWithoutDefaultFields(t *testing.T) {
+	for _, tool := range []string{"generate_image", "derive_image", "upscale_image", "batch_generate"} {
+		for _, action := range []string{"auto", "run"} {
+			t.Run(tool+"/"+action, func(t *testing.T) {
+				input := object{"action": action, "requestId": "original-preview"}
+				if tool == "batch_generate" {
+					delete(input, "requestId")
+					input["batchId"] = "original-batch"
+				}
+				calls := 0
+				server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+					calls++
+					var payload object
+					if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
+						t.Error(err)
+					}
+					params, _ := payload["params"].(map[string]any)
+					if payload["method"] != "tools/call" || params["name"] != tool || !reflect.DeepEqual(params["arguments"], input) {
+						t.Errorf("receipt arguments changed: %v", payload)
+					}
+					_ = json.NewEncoder(w).Encode(object{"jsonrpc": "2.0", "id": payload["id"], "result": object{"structuredContent": object{"status": "running"}}})
+				}))
+				defer server.Close()
+				t.Setenv("INKROOM_MCP_URL", server.URL)
+				t.Setenv("INKROOM_MCP_TOKEN", "synthetic-receipt-test")
+				dir := t.TempDir()
+				arguments := filepath.Join(dir, "arguments.json")
+				if err := os.WriteFile(arguments, marshal(input), 0600); err != nil {
+					t.Fatal(err)
+				}
+				if err := run([]string{"call", "--tool", tool, "--arguments", arguments, "--output", filepath.Join(dir, "output")}); err != nil {
+					t.Fatal(err)
+				}
+				if calls != 1 {
+					t.Fatalf("execution was sent %d times", calls)
+				}
+			})
+		}
+	}
+}
+
 func TestSkillPreservesPublicAndLegacyModelArguments(t *testing.T) {
 	cases := []struct {
 		name  string
@@ -26,6 +67,12 @@ func TestSkillPreservesPublicAndLegacyModelArguments(t *testing.T) {
 			object{"model": "nano-previous-public-name", "prompt": "same prompt"},
 		}}},
 		{"server default", "generate_image", object{"action": "preview", "prompt": "original prompt"}},
+		{"native preview", "generate_image", object{"action": "preview", "prompt": "original prompt", "deliveryMode": "native"}},
+		{"execute single preview", "generate_image", object{"action": "auto", "requestId": "original-preview"}},
+		{"execute edit preview", "derive_image", object{"action": "run", "requestId": "original-preview"}},
+		{"execute processing preview", "upscale_image", object{"action": "auto", "requestId": "original-preview"}},
+		{"execute batch preview", "batch_generate", object{"action": "run", "batchId": "original-batch"}},
+		{"receipt wait", "wait_images", object{"batchId": "original-batch", "cursor": "original-cursor"}},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
@@ -58,7 +105,9 @@ func TestSkillPreservesPublicAndLegacyModelArguments(t *testing.T) {
 			params, _ := got["params"].(map[string]any)
 			want := object{}
 			_ = json.Unmarshal(marshal(tc.input), &want)
-			want["deliveryMode"] = "links"
+			if (tc.input["requestId"] == nil && tc.input["batchId"] == nil || tc.tool == "wait_images") && tc.input["deliveryMode"] == nil {
+				want["deliveryMode"] = "links"
+			}
 			if params["name"] != tc.tool || !reflect.DeepEqual(params["arguments"], want) {
 				t.Fatalf("model or other caller arguments changed: got=%v, want=%v", params, want)
 			}
