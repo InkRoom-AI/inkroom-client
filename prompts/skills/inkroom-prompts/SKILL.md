@@ -7,6 +7,8 @@ license: MIT
 
 # InkRoom Prompts
 
+[Official prompt tools](https://inkroom.ai/tools/prompts) · [Usage and MCP documentation](https://inkroom.ai/tools/prompts/docs)
+
 Requires internet access and either the InkRoom Prompts MCP tools or Node.js 20.3+ for the bundled scripts.
 
 This 1.0.4 release has four MCP tools: `help`, `list_models`, `search_prompts` and `optimize_prompt`. The previous 1.0.3 release has two prompt tools.
