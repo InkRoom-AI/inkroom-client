@@ -1,6 +1,6 @@
 {
   "name": "inkroom-prompts",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Keyless InkRoom prompt search MCP server and Agent Skill with real example images",
   "type": "module",
   "bin": {
@@ -47,5 +47,12 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.32.1",
     "zod": "3.25.76"
+  },
+  "bugs": {
+    "url": "https://github.com/InkRoom-AI/inkroom-client/issues"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   }
 }
