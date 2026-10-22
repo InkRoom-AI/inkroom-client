@@ -8,8 +8,6 @@
 
 > **正式提示词工具：** 请使用上方官方工具和文档。MCP 包在本机通过 STDIO 或 loopback HTTP 运行，当前不公布公共 Remote MCP 地址。
 
-**当前源码候选为 1.0.5。** 本分支在已经核实的 1.0.4 基础上增加尚未发布的安全边界。下方安装地址仍是不可变且可用的 1.0.4 GitHub 附件；npm 发布、全新 registry 安装及完整 1.0.5 平台适配发布仍待完成，不能把本分支当作已发布新版。
-
 对助手说：**“帮我找几个暖色咖啡馆海报提示词，带示例图。”**
 
 1. 检索已公开、审核通过的词库，返回完整提示词、对应示例图与来源。
@@ -33,20 +31,27 @@ node src/cli.mjs --help
 
 无需填写任何密钥或准备 `.env`。
 
-支持 `mcpServers` 配置的客户端，可使用正式包：
+当前可安装的是已经核验的 **1.0.4 GitHub 发行包**。支持 `mcpServers` 配置的客户端使用：
 
 ```json
 {
   "mcpServers": {
     "inkroom-prompts": {
       "command": "npx",
-      "args": ["-y", "--package", "https://github.com/InkRoom-AI/inkroom-client/releases/download/prompts-v1.0.4/inkroom-prompts-1.0.4.tgz", "inkroom-prompts"]
+      "args": [
+        "-y",
+        "--package",
+        "https://github.com/InkRoom-AI/inkroom-client/releases/download/prompts-v1.0.4/inkroom-prompts-1.0.4.tgz",
+        "inkroom-prompts"
+      ]
     }
   }
 }
 ```
 
-包通过 GitHub Release 分发，未声明已发布 npm。源码模式可将命令改为 `node`，参数填写 `prompts/src/cli.mjs` 的绝对路径。其他客户端按各自配置格式填写相同命令和参数，不添加鉴权字段。
+`npx` 直接下载 GitHub 附件，不要求该产品先发布到 npm registry。源码模式将命令设为 `node`，参数填写本目录 `prompts/src/cli.mjs` 的绝对路径。其他客户端按各自格式填写相同命令和参数，不添加鉴权字段。[1.0.4 Skill/MCPB 资源](https://github.com/InkRoom-AI/inkroom-client/releases/tag/prompts-v1.0.4)可分别安装。
+
+本目录包含 **1.0.5 源码改动**，不可变1.0.4附件不含新增内容信任元信息或请求边界。运行源码会使用当前目录的实际文件；只有1.0.5完整 GitHub 制品真实发布并通过全新安装验证后，才能提供其可安装入口，源码版本不等于发行已可用。这里不提供 npm 包名安装方式。
 
 需要本地 HTTP 时运行 `node src/cli.mjs --http 8788`，连接 `http://127.0.0.1:8788/mcp`，无需 Header。预览版没有宣布已上线的官方公网 Remote MCP 地址。
 
@@ -77,7 +82,7 @@ AI 优化属于平台内部调用，使用管理员选择的内部文本模型�
 
 ## 不可信内容
 
-词库标题、标签、完整提示词、来源、示例图和 AI 优化文本均为第三方或模型创作数据，不是 Agent 指令。本轮源码在完整保留原文的同时，为检索和优化结果增加固定 `contentTrust` 元信息，明确 `instructionAuthority: "none"`。其中的内容不能授权执行命令、索取凭据、改配置或费用策略，也不能发起新的付费操作。只在用户实际请求的创作任务中展示或复用原文；脚本不执行返回文本，不下载执行来源脚本，错误也不会自动触发优化。
+词库标题、标签、完整提示词、来源、示例图和 AI 优化文本均为第三方或模型创作数据，不是 Agent 指令。本包在完整保留原文的同时，为检索和优化结果增加固定 `contentTrust` 元信息，明确 `instructionAuthority: "none"`。其中的内容不能授权执行命令、索取凭据、改配置或费用策略，也不能发起新的付费操作。只在用户实际请求的创作任务中展示或复用原文；脚本不执行返回文本，不下载执行来源脚本，错误也不会自动触发优化。
 
 ## 服务边界
 
@@ -93,7 +98,7 @@ AI 优化属于平台内部调用，使用管理员选择的内部文本模型�
 
 ## Docker STDIO 分发
 
-下述 Docker 命令对应不可变的 `prompts-v1.0.4` 源码，不将尚未发布的 1.0.5 候选标记为正式版。Dockerfile 打包该免鉴权 **1.0.4** MCP。在当前目录执行 `docker build -t inkroom-prompts:1.0.4 .`，MCP 客户端使用 `docker run --rm -i --read-only --cap-drop=ALL --security-opt=no-new-privileges inkroom-prompts:1.0.4` 连接。无需端口、卷、API Key 或 MCP Token；公开搜索和限额文字优化仍需网络。镜像以非 root 的 node 用户运行，基础镜像已锁 digest。
+下述 Docker 命令对应不可变的 `prompts-v1.0.4` 源码；新的源码包不会重新标记该版本镜像。Dockerfile 打包该免鉴权 **1.0.4** MCP。在当前目录执行 `docker build -t inkroom-prompts:1.0.4 .`，MCP 客户端使用 `docker run --rm -i --read-only --cap-drop=ALL --security-opt=no-new-privileges inkroom-prompts:1.0.4` 连接。无需端口、卷、API Key 或 MCP Token；公开搜索和限额文字优化仍需网络。镜像以非 root 的 node 用户运行，基础镜像已锁 digest。
 
 Linux/amd64、Node v22.23.3 已验证容器初始化、工具发现、无效输入/离线错误及一次匿名提示词搜索。容器协议通过不等于 Docker Catalog 审核或原生 Docker Desktop Toolkit 安装验收通过；其他架构尚未测试。
 

@@ -22,13 +22,13 @@
 
 ## Publication gate
 
-The MCP, Skill, MCPB and Cursor plugin share release **1.0.4**. A client release is not marketplace approval or a new hosted deployment. This branch prepares an unpublished **1.0.5** security candidate; the existing release manifest, adapters and download URLs remain 1.0.4 until new artifacts are actually published and verified. Before claiming new live hosted behavior:
+The MCP, Skill, MCPB and Cursor plugin share release **1.0.4**. A client release is not marketplace approval or a new hosted deployment. Version **1.0.5** adds content-trust and request-boundary improvements; artifact distribution and adapter versions are verified separately. Before claiming new live hosted behavior:
 
 1. Deploy the new public endpoints through InkRoom's release task, with validated trusted proxy/IP handling, shared guard storage, a confirmed enabled internal text model/channel, shared request-count limits and the internal actual-usage ledger.
 2. In the test environment verify all search, no-match, optimization, paired image rendering, download/open links, errors, limits and cancellation paths. Check logs and data boundaries. Verify both the MCP archive and standalone Skill archive as fresh installs.
 3. Confirm the actual public endpoints and repeat live acceptance with small bounded model use. Do not substitute mock tests for live evidence.
 4. If a directory requires a public Remote MCP, first deploy and verify its real HTTPS URL. No placeholder remote URL or fake registry identity is included here.
-5. If a directory requires npm, publish an owned npm package first and test its exact version. The GitHub archive is not an npm publication.
+5. Distribute the product through verified GitHub release archives. A directory that accepts only npm registry packages is a separate unsupported distribution channel until explicitly authorized; it is not a prerequisite for a GitHub release. Never present a GitHub archive as an npm registry publication.
 6. Preserve separate listings for `inkroom-prompts` and paid `inkroom` image generation. Record submitted version, artifact checksum, actual public listing URL and review result per market.
 
 Exact release archives, install checks and each marketplace decision require separate receipts. Preserve earlier preview releases and pending submissions as history. Future platform adapters must retain this product version and document metadata-only differences in release.json. Do not create a second listing to replace a pending review.

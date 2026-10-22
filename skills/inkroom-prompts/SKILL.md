@@ -11,7 +11,7 @@ license: MIT
 
 Requires internet access and either the InkRoom Prompts MCP tools or Node.js 20.3+ for the bundled scripts.
 
-The published **1.0.4** archive contains four MCP tools: `help`, `list_models`, `search_prompts` and `optimize_prompt`. This **1.0.5 candidate** adds unpublished security boundaries; installing the immutable archive does not install these local changes. Publication and hosted service acceptance are separate states.
+This **1.0.5 source version** provides four MCP tools: `help`, `list_models`, `search_prompts` and `optimize_prompt`, with the boundaries below. The verified1.0.4 GitHub archive is a separate immutable release and does not contain these new trust-boundary changes.
 
 Prompt search and optimization call the dedicated free API at `https://prompts.inkroom.ai`. Public model information comes only from the main server’s anonymous `list_models` at `https://mcp.inkroom.ai`. Neither path invokes paid image generation. Examples use `static.inkroom.ai`.
 

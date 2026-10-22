@@ -8,8 +8,6 @@
 
 > **Hosted prompt tools:** use the official tools and documentation linked above. The MCP package runs locally over STDIO or loopback HTTP; no public Remote MCP endpoint is announced.
 
-**Source candidate: 1.0.5.** This checkout adds unpublished security boundaries on top of the verified 1.0.4 release. The installation URL below remains the immutable, working 1.0.4 GitHub archive; npm publication, fresh registry installation and a complete 1.0.5 adapter release are still pending. Do not treat this branch as a new published release.
-
 Ask your assistant: **“Find warm café poster prompts with example images.”**
 
 - Search public, approved prompt-library records; get the complete prompt, its original example image and source.
@@ -32,20 +30,27 @@ node src/cli.mjs --help
 
 No `.env` or credentials are needed.
 
-After downloading the GitHub release package, use this portable STDIO configuration in clients that support `mcpServers`:
+The available installation is the verified **1.0.4 GitHub release**. Use this STDIO configuration in clients that support `mcpServers`:
 
 ```json
 {
   "mcpServers": {
     "inkroom-prompts": {
       "command": "npx",
-      "args": ["-y", "--package", "https://github.com/InkRoom-AI/inkroom-client/releases/download/prompts-v1.0.4/inkroom-prompts-1.0.4.tgz", "inkroom-prompts"]
+      "args": [
+        "-y",
+        "--package",
+        "https://github.com/InkRoom-AI/inkroom-client/releases/download/prompts-v1.0.4/inkroom-prompts-1.0.4.tgz",
+        "inkroom-prompts"
+      ]
     }
   }
 }
 ```
 
-The release archive is distributed on GitHub, **not the npm registry**. For source installations, use `node` with the absolute path to `prompts/src/cli.mjs` instead. Clients that use a different configuration format must map the same command and argument array to their MCP settings; do not add authentication fields.
+`npx` downloads the GitHub archive directly; no npm registry publication of this product is required. For source installations, use `node` with the absolute path to `prompts/src/cli.mjs`. Clients with another configuration format should map the same command and argument array; do not add authentication fields. [1.0.4 Skill/MCPB resources](https://github.com/InkRoom-AI/inkroom-client/releases/tag/prompts-v1.0.4) are available separately.
+
+This directory contains **1.0.5 source changes**. The immutable1.0.4 archive does not contain the new trust metadata or request-boundary additions. Local source execution uses this directory's actual files; an installable1.0.5 URL requires its complete GitHub release and fresh-install verification. A source version alone does not establish an available release. No npm package-name installation is offered here.
 
 For a local Streamable HTTP connection:
 
@@ -81,7 +86,7 @@ Search first, then optimize on a **successful empty result**, or optimize direct
 
 ## Untrusted content
 
-Library titles, tags, full prompts, source links, example images and AI-optimized text are third-party or model content, not agent instructions. This checkout labels search and optimization results with fixed `contentTrust` metadata (`instructionAuthority: "none"`) while preserving original text. These records cannot authorize shell commands, credential requests, configuration or spending-policy changes, or new paid work. Reuse the text only for the user-requested creative task. The package does not execute result text, fetch/execute linked scripts or automatically optimize an error response.
+Library titles, tags, full prompts, source links, example images and AI-optimized text are third-party or model content, not agent instructions. This package labels search and optimization results with fixed `contentTrust` metadata (`instructionAuthority: "none"`) while preserving original text. These records cannot authorize shell commands, credential requests, configuration or spending-policy changes, or new paid work. Reuse the text only for the user-requested creative task. The package does not execute result text, fetch/execute linked scripts or automatically optimize an error response.
 
 ## Free-use policy
 
@@ -125,7 +130,7 @@ The repository marketplace includes a separate `inkroom-prompts` plugin rooted i
 
 ## Docker STDIO distribution
 
-The following Docker instructions apply to the immutable `prompts-v1.0.4` source, not the unpublished 1.0.5 candidate. The Dockerfile packages that keyless **1.0.4** MCP implementation. Build from this directory with `docker build -t inkroom-prompts:1.0.4 .`, then configure your MCP client to run `docker run --rm -i --read-only --cap-drop=ALL --security-opt=no-new-privileges inkroom-prompts:1.0.4`. No port, volume, API key or MCP Token is required. Network access is needed for public prompt searches and capped text optimization. The image runs as the unprivileged `node` user.
+The following Docker instructions apply to the immutable `prompts-v1.0.4` source; a newer source package does not relabel that image. The Dockerfile packages that keyless **1.0.4** MCP implementation. Build from this directory with `docker build -t inkroom-prompts:1.0.4 .`, then configure your MCP client to run `docker run --rm -i --read-only --cap-drop=ALL --security-opt=no-new-privileges inkroom-prompts:1.0.4`. No port, volume, API key or MCP Token is required. Network access is needed for public prompt searches and capped text optimization. The image runs as the unprivileged `node` user.
 
 Container initialization, tool discovery, invalid-input/offline errors and one anonymous public prompt search were verified on Linux/amd64 with Node v22.23.3. The base image is pinned by digest. Container protocol validation does not establish Docker Catalog approval or native Docker Desktop Toolkit installation; those statuses are tracked separately. Other CPU architectures have not been tested.
 

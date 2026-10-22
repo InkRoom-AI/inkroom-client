@@ -1,7 +1,7 @@
 # MCP configuration examples
 
 - `mcp.json` uses the GitHub `1.0.4` archive and the default `https://prompts.inkroom.ai` service. It requires no Key, Token or environment variables.
-- `mcp-test.json` can run this local `1.0.5` source candidate; it does not download or claim a published 1.0.5 package. Replace its absolute CLI path with your installation path. The optional `INKROOM_PROMPTS_ORIGIN` selects a test service; it is not an MCP listener URL. Remove the variable for normal usage. Do not use this option to evade a limit or claim a hosted deployment is already available.
+- `mcp-test.json` runs local source or a separately installed release. Replace its absolute CLI path with your installation path. The optional `INKROOM_PROMPTS_ORIGIN` selects a test service; it is not an MCP listener URL. Remove the variable for normal usage. Do not use this option to evade a limit or claim a hosted deployment is already available.
 - The same optional variable applies to `node src/cli.mjs --http 8788` and `node skills/inkroom-prompts/scripts/prompts.mjs search "keywords"`. The HTTP listener remains on loopback. Only HTTPS origins are accepted, except HTTP loopback for local tests; credentials, paths, queries and fragments are rejected.
 
-配置无需 Key 或 Token。`mcp.json` 保留本版 GitHub 正式包；`mcp-test.json` 可运行本地 1.0.5 源码候选，需替换 CLI 绝对路径，不代表已发布 1.0.5 包。测试地址不影响本地监听地址，不设置环境变量即使用默认服务。新版本是否已发布、测试服务是否可用，均需单独核实。
+配置无需 Key 或 Token。`mcp.json` 保留本版 GitHub 正式包；`mcp-test.json` 可运行本地或独立安装的 CLI，需填写绝对路径并明确选择测试服务源。测试地址不影响本地监听地址，不设置环境变量即使用默认服务。新版本是否已发布、测试服务是否可用，均需单独核实。

@@ -1,10 +1,10 @@
-# 1.0.5 — unpublished source candidate
+# 1.0.5
 
 - Mark remote library and optimizer results with fixed `contentTrust` metadata; preserve original creative text without granting it instruction authority.
 - Bound prompt-client requests to same-origin public search and optimization paths, reject malformed origins and invalid CLI arguments, and preserve credential-free requests, redirect rejection and existing time/body limits.
 - Document the boundary for all remote titles, tags, prompts, source/example links and optimizer text. They cannot authorize code execution, credential disclosure, configuration or spending changes.
-- Prepare explicit public npm registry metadata. No npm package is claimed to exist until publication and fresh installation are verified.
-- Existing 1.0.4 release attachments remain unchanged; these changes require a new version and real release acceptance.
+- Retain the verified1.0.4 GitHub installation while documenting1.0.5 source execution and the complete GitHub release requirement.
+- Preserve 1.0.4 GitHub attachments as a compatibility fallback; their immutable contents do not include these changes.
 
 
 # 1.0.4
