@@ -13,7 +13,8 @@ test('real SDK initialize, tool schema, structured content and resource link',as
  const [a,b]=InMemoryTransport.createLinkedPair(); const server=createPromptServer(stub); const client=new Client({name:'acceptance',version:'1'});
  await server.connect(a); await client.connect(b);
  try {
-  assert.deepEqual((await client.listTools()).tools.map(t=>t.name),['search_prompts','optimize_prompt']);
+  assert.deepEqual((await client.listTools()).tools.map(t=>t.name),['help','list_models','search_prompts','optimize_prompt']);
+  const help=await client.callTool({name:'help',arguments:{}}); assert.equal(help.structuredContent.serviceStatus,'not_checked');
   const result=await client.callTool({name:'search_prompts',arguments:{query:'coffee'}});
   assert.equal(result.structuredContent.items[0].prompt,'Original'); assert.equal(result.content[1].type,'resource_link'); assert.equal(result.content[1].uri,image);
   const optimized=await client.callTool({name:'optimize_prompt',arguments:{query:'coffee'}});
@@ -32,7 +33,7 @@ test('STDIO CLI initializes without auth or stdout noise',async()=>{
  const client=new Client({name:'stdio-test',version:'1'});
  const transport=new StdioClientTransport({command:process.execPath,args:['src/cli.mjs'],stderr:'pipe'});
  await client.connect(transport);
- try {assert.equal((await client.listTools()).tools.length,2);} finally {await client.close();}
+ try {assert.equal((await client.listTools()).tools.length,4);const help=await client.callTool({name:'help',arguments:{}});assert.equal(help.structuredContent.kind,'capabilities');} finally {await client.close();}
 });
 test('Streamable HTTP works without auth and rejects hostile Origin and Host',async()=>{
  const listener=createHttpApp(stub).listen(0,'127.0.0.1'); await new Promise(resolve=>listener.once('listening',resolve));

@@ -115,7 +115,7 @@ export class PublicCatalogClient {
   async models({signal} = {}) {
     const timeout = AbortSignal.timeout(this.timeoutMs);
     const combined = signal ? AbortSignal.any([signal,timeout]) : timeout;
-    const initialized = await this.post({jsonrpc:'2.0',id:1,method:'initialize',params:{protocolVersion:PROTOCOL_VERSION,capabilities:{},clientInfo:{name:'inkroom-prompts-public-catalog',version:'1.0.4'}}},{signal:combined});
+    const initialized = await this.post({jsonrpc:'2.0',id:1,method:'initialize',params:{protocolVersion:PROTOCOL_VERSION,capabilities:{},clientInfo:{name:'inkroom-prompts-public-catalog',version:'1.0.5'}}},{signal:combined});
     const session = initialized.headers.get('mcp-session-id');
     const info = await readRPC(initialized,1);
     if (typeof info.protocolVersion !== 'string' || !info.serverInfo || !info.capabilities)
